@@ -20,6 +20,10 @@ def getiTunesFirstCollectionView(searchTerm)
 	return json_response['results'].first['collectionViewUrl']
 end
 
+get / do
+	Hello
+end
+
 post '/spotitunes' do
 	message = params[:text]
 	spotifyURL = parseMessage(message)
