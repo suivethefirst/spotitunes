@@ -1,2 +1,2 @@
-require './spotitunes.rb'
+require './spotiTunes.rb'
 run Sinatra::Application
