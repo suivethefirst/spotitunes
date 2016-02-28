@@ -26,12 +26,13 @@ end
 
 post '/spotitunes' do
 	message = params[:text]
-	spotifyURL = parseMessage(message)
-	artistAlbum = getArtistAlbumFromSpotifyURL(spotifyURL)
-	itunesLink = getiTunesFirstCollectionView(artistAlbum)
+	if (spotifyURL = parseMessage(message))
+		artistAlbum = getArtistAlbumFromSpotifyURL(spotifyURL)
+		itunesLink = getiTunesFirstCollectionView(artistAlbum)
 
-	content_type :json
-	{:text => itunesLink}.to_json
+		content_type :json
+		{:text => itunesLink}.to_json
+	end
 end
 
 # puts getFirstCollectionView('sepultura')
