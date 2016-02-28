@@ -20,6 +20,16 @@ def getiTunesFirstCollectionView(searchTerm)
 	return json_response['results'].first['collectionViewUrl']
 end
 
+post '/spotitunes' do
+	message = params[:text]
+	spotifyURL = parseMessage(message)
+	artistAlbum = getArtistAlbumFromSpotifyURL(spotifyURL)
+	itunesLink = getiTunesFirstCollectionView(artistAlbum)
+
+	content_type :json
+	{:text => itunesLink}.to_json
+end
+
 # puts getFirstCollectionView('sepultura')
 # puts getiTunesFirstCollectionView(getArtistAlbumFromSpotifyURL(parseMessage(ARGV[0])))
 
