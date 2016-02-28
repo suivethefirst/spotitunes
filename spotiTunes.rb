@@ -20,8 +20,8 @@ def getiTunesFirstCollectionView(searchTerm)
 	return json_response['results'].first['collectionViewUrl']
 end
 
-get / do
-	Hello
+get '/' do
+	'Hello'
 end
 
 post '/spotitunes' do
