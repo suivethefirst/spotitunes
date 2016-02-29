@@ -30,7 +30,7 @@ end
 
 post '/spotitunes' do
 
-	if params[:token] != ENV[SLACK_TOKEN]
+	if params[:token] != ENV['SLACK_TOKEN']
 		return
 	end
 
