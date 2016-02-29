@@ -4,7 +4,11 @@ require 'json'
 
 def parseMessage(message)
 	spotifyURL = /spotify:(\balbum|\btrack):[a-zA-Z0-9]+/.match(message)
-	return spotifyURL.to_s
+	if spotifyURL.nil?
+		return "-1"
+	else
+		return spotifyURL.to_s
+	end
 end
 
 def getArtistAlbumFromSpotifyURL(spotifyURL)
@@ -25,14 +29,22 @@ get '/' do
 end
 
 post '/spotitunes' do
+
+	if params[:token] != ENV[SLACK_TOKEN]
+		return
+	end
+
 	message = params[:text]
-	if (spotifyURL = parseMessage(message))
+
+	if (spotifyURL = parseMessage(message)) != "-1"
+
 		artistAlbum = getArtistAlbumFromSpotifyURL(spotifyURL)
 		itunesLink = getiTunesFirstCollectionView(artistAlbum)
 
 		content_type :json
 		{:text => itunesLink}.to_json
 	end
+
 end
 
 # puts getFirstCollectionView('sepultura')
