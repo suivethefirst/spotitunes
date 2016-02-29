@@ -60,7 +60,3 @@ post '/spotitunes' do
 	end
 
 end
-
-# puts getFirstCollectionView('sepultura')
-# puts getiTunesFirstCollectionView(getArtistAlbumFromSpotifyURL(parseMessage(ARGV[0])))
-
