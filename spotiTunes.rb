@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'httparty'
 require 'json'
+require 'oga'
 
 def parseMessage(message)
 
@@ -50,6 +51,18 @@ def getiTunesFirstCollectionView(searchTerm)
 
 end
 
+def getGPlayFirstAlbum(searchTerm)
+	baseURL = "https://play.google.com"
+	url = "https://play.google.com/store/search?q=#{searchTerm}&c=music&docType=2"
+	
+	response = HTTParty.get('https://play.google.com/store/search?q=sepultura+roots&c=music&docType=2', verify: false).body
+	document = Oga.parse_html(response)
+	results = document.xpath("//a[@class='card-click-target']")
+	return baseURL + results[0].get('href')
+end
+
+
+
 post '/spotitunes' do
 
 	if params[:token] != ENV['SLACK_TOKEN']
@@ -62,10 +75,12 @@ post '/spotitunes' do
 
 		artistAlbum = getArtistAlbumFromSpotifyURL(spotifyURL)
 		itunesLink = getiTunesFirstCollectionView(artistAlbum)
+		gPlayLink = getGPlayFirstAlbum(artistAlbum)
+
+		outputmessage = itunesLink + '/n/n' + gPlayLink
 
 		content_type :json
 		{:text => itunesLink}.to_json
 	end
 
 end
-
