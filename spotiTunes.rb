@@ -77,7 +77,7 @@ post '/spotitunes' do
 		itunesLink = getiTunesFirstCollectionView(artistAlbum)
 		gPlayLink = getGPlayFirstAlbum(artistAlbum)
 
-		outputmessage = itunesLink + '\n\n' + gPlayLink
+		outputmessage = itunesLink + ' \n\n ' + gPlayLink
 
 		content_type :json
 		{:text => outputmessage}.to_json
