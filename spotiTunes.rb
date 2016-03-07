@@ -6,23 +6,35 @@ def parseMessage(message)
 
 	spotifyURL = /spotify:(\balbum|\btrack):[a-zA-Z0-9]+/.match(message)
 
+	if !(spotifyURL.nil?)
+		spotifyURL = spotifyURL.to_s.split(':')
+		spotifyHash = {
+			'type' => spotifyURL[1],
+			'id' => spotifyURL[2]
+		}
+		return spotifyHash
+	end
+
+	spotifyURL = /https:\/\/play.spotify.com\/(\btrack|\balbum)\/([a-zA-Z0-9])+/.match(message)
+
+	if !(spotifyURL.nil?)
+		spotifyURL = spotifyURL.to_s.split('/')
+		spotifyHash = {
+			'type' => spotifyURL[3],
+			'id' => spotifyURL[4]
+		}
+		return spotifyHash
+	end
+
 	if spotifyURL.nil?
 		return "-1"
-	else
-		return spotifyURL.to_s
 	end
 
 end
 
-def getArtistAlbumFromSpotifyURL(spotifyURL)
+def getArtistAlbumFromSpotifyURL(spotifyHash)
 
-	spotifyParsed = spotifyURL.split(':')
-
-	if spotifyParsed[1] = 'album'
-		url = "https://api.spotify.com/v1/albums/#{spotifyParsed[2]}"
-	elsif spotifyParsed[1] = 'track'
-		url = "https://api.spotify.com/v1/tracks/#{spotifyParsed[2]}"
-	end
+	url = "https://api.spotify.com/v1/#{spotifyHash['type']}s/#{spotifyHash['id']}"
 
 	json_response = JSON.parse(HTTParty.get(url).body)
 	return json_response['artists'][0]['name'] + ' ' + json_response['name']
@@ -36,10 +48,6 @@ def getiTunesFirstCollectionView(searchTerm)
 
 	return json_response['results'].first['collectionViewUrl']
 
-end
-
-get '/' do
-	'Hello'
 end
 
 post '/spotitunes' do
@@ -60,3 +68,4 @@ post '/spotitunes' do
 	end
 
 end
+
