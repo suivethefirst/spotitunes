@@ -52,13 +52,16 @@ def getiTunesFirstCollectionView(searchTerm)
 end
 
 def getGPlayFirstAlbum(searchTerm)
-	baseURL = "https://play.google.com"
+
 	url = "https://play.google.com/store/search?q=#{searchTerm}&c=music&docType=2"
 	
 	response = HTTParty.get(url, verify: false).body
 	document = Oga.parse_html(response)
 	results = document.xpath("//a[@class='card-click-target']")
-	return baseURL + results[0].get('href')
+
+	id = results[0].get('href').split('id=')[1]
+	
+	return "https://play.google.com/music/listen?view=#{id}_cid&authuser=0"
 end
 
 
