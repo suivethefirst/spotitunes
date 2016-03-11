@@ -45,9 +45,15 @@ end
 def getiTunesFirstCollectionView(searchTerm)
 
 	url = "https://itunes.apple.com/search?term=#{searchTerm}&country=GB"
-	json_response = JSON.parse(HTTParty.get(url))
 
-	return json_response['results'].first['collectionViewUrl']
+	begin
+		json_response = JSON.parse(HTTParty.get(url))
+		itunesLink = json_response['results'].first['collectionViewUrl']
+	rescue Exception => e
+		return "Couldn't get this one from iTunes :("
+	end
+
+	return itunesLink 
 
 end
 
@@ -55,13 +61,19 @@ def getGPlayFirstAlbum(searchTerm)
 
 	url = "https://play.google.com/store/search?q=#{searchTerm}&c=music&docType=2"
 	
-	response = HTTParty.get(url, verify: false).body
-	document = Oga.parse_html(response)
-	results = document.xpath("//a[@class='card-click-target']")
+	begin
+		response = HTTParty.get(url, verify: false).body
+		document = Oga.parse_html(response)
+		results = document.xpath("//a[@class='card-click-target']")
 
-	id = results[0].get('href').split('id=')[1]
+		id = results[0].get('href').split('id=')[1]
+
+		gPlayLink = "https://play.google.com/music/listen?view=#{id}_cid&authuser=0"
+	rescue Exception => e
+		return "Couldn't get this one from Google Play"
+	end
 	
-	return "https://play.google.com/music/listen?view=#{id}_cid&authuser=0"
+	return gPlayLink
 end
 
 
@@ -80,7 +92,7 @@ post '/spotitunes' do
 		itunesLink = getiTunesFirstCollectionView(artistAlbum)
 		gPlayLink = getGPlayFirstAlbum(artistAlbum)
 
-		outputmessage = itunesLink + ' ' + gPlayLink
+		outputmessage = itunesLink + "\n" + gPlayLink
 
 		content_type :json
 		{:text => outputmessage}.to_json
