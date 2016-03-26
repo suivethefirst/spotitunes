@@ -53,7 +53,11 @@ end
 
 def getSpotifyFirstHit(searchTerm)
 
+	url ="https://api.spotify.com/v1/search?q=#{searchTerm}&type=album,track"
 
+	json_response = JSON.parse(HTTParty.get(url).body)
+
+	return json_response['albums']['items'][0]['external_urls']['spotify']
 
 end
 
