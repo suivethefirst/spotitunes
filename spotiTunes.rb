@@ -3,6 +3,12 @@ require 'httparty'
 require 'json'
 require 'oga'
 
+linkTypes = {
+	'notfound' => 0,
+	'spotify' => 1,
+	'itunes' => 2
+}
+
 def parseMessage(message)
 
 	spotifyURL = /spotify:(\balbum|\btrack):[a-zA-Z0-9]+/.match(message)
@@ -27,6 +33,13 @@ def parseMessage(message)
 		return spotifyHash
 	end
 
+	iTunesURL = /https:\/\/itunes.apple.com\/.+/.match(message)
+
+	if !(iTunesURL.nil?)
+		iTunesID = iTunesURL.split('/')[6][2..-1]
+		return iTunesID
+	end
+	
 	if spotifyURL.nil?
 		return "-1"
 	end
