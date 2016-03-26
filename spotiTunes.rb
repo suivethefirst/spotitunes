@@ -42,6 +42,21 @@ def getArtistAlbumFromSpotifyURL(spotifyHash)
 
 end
 
+def getArtistAlbumFromiTunesID(iTunesID)
+
+	url = "https://itunes.apple.com/lookup?id=#{iTunesID}"
+
+	json_response = JSON.parse(HTTParty.get(url).body)
+	return json_response['results'][0]['artistName'] + ' ' + json_response['results'][0]['collectionName']
+
+end
+
+def getSpotifyFirstHit(searchTerm)
+
+
+
+end
+
 def getiTunesFirstCollectionView(searchTerm)
 
 	url = "https://itunes.apple.com/search?term=#{searchTerm}&country=GB"
