@@ -19,7 +19,13 @@ def parseMessage(message)
 			'type' => spotifyURL[1],
 			'id' => spotifyURL[2]
 		}
-		return spotifyHash
+
+		resultHash = {
+			'type' => linkTypes['spotify'],
+			'content' => spotifyHash
+		}
+
+		return resultHash
 	end
 
 	spotifyURL = /https:\/\/play.spotify.com\/(\btrack|\balbum)\/([a-zA-Z0-9])+/.match(message)
@@ -30,19 +36,32 @@ def parseMessage(message)
 			'type' => spotifyURL[3],
 			'id' => spotifyURL[4]
 		}
-		return spotifyHash
+
+		resultHash = {
+			'type' => linkTypes['spotify'],
+			'content' => spotifyHash
+		}
+
+		return resultHash
 	end
 
 	iTunesURL = /https:\/\/itunes.apple.com\/.+/.match(message)
 
 	if !(iTunesURL.nil?)
 		iTunesID = iTunesURL.split('/')[6][2..-1]
-		return iTunesID
+
+		resultHash = {
+			'type' = linkTypes['itunes'],
+			'content' = iTunesID
+		}
+
+		return resultHash
 	end
 	
-	if spotifyURL.nil?
-		return "-1"
-	end
+	resultHash = {
+		'type' = linkTypes['notfound'],
+		'content' = ''
+	}
 
 end
 
