@@ -135,18 +135,35 @@ post '/spotitunes' do
 		return
 	end
 
-	message = params[:text]
+	searchHash = parseMessage(params[:text])
 
-	if (spotifyURL = parseMessage(message)) != "-1"
+	case searchHash['type']
 
-		artistAlbum = getArtistAlbumFromSpotifyURL(spotifyURL)
+	when linkTypes['notfound']
+
+		return
+
+	when linkTypes['spotify']
+
+		artistAlbum = getArtistAlbumFromSpotifyURL(searchHash['content'])
+
 		itunesLink = getiTunesFirstCollectionView(artistAlbum)
 		gPlayLink = getGPlayFirstAlbum(artistAlbum)
 
 		outputmessage = itunesLink + "\n" + gPlayLink
 
-		content_type :json
-		{:text => outputmessage}.to_json
+	when linkTypes['itunes']
+
+		artistAlbum = getArtistAlbumFromiTunesID(searchHash['content'])
+
+		spotifyLink = getSpotifyFirstHit(artistAlbum)
+		gPlayLink = getGPlayFirstAlbum(artistAlbum)
+
+		outputmessage = spotifyLink + "\n" + gPlayLink
+
 	end
+
+	content_type :json
+	{:text => outputmessage}.to_json
 
 end
