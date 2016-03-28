@@ -3,11 +3,12 @@ require 'httparty'
 require 'json'
 require 'oga'
 
-linkTypes = {
-	'notfound' => 0,
-	'spotify' => 1,
-	'itunes' => 2
-}
+
+	$linkTypes = {
+		'notfound' => 0,
+		'spotify' => 1,
+		'itunes' => 2
+	}
 
 def parseMessage(message)
 
@@ -21,7 +22,7 @@ def parseMessage(message)
 		}
 
 		resultHash = {
-			'type' => linkTypes['spotify'],
+			'type' => $linkTypes['spotify'],
 			'content' => spotifyHash
 		}
 
@@ -38,7 +39,7 @@ def parseMessage(message)
 		}
 
 		resultHash = {
-			'type' => linkTypes['spotify'],
+			'type' => $linkTypes['spotify'],
 			'content' => spotifyHash
 		}
 
@@ -48,19 +49,19 @@ def parseMessage(message)
 	iTunesURL = /https:\/\/itunes.apple.com\/.+/.match(message)
 
 	if !(iTunesURL.nil?)
-		iTunesID = iTunesURL.split('/')[6][2..-1]
+		iTunesID = iTunesURL.to_s.split('/')[6][2..-1]
 
 		resultHash = {
-			'type' = linkTypes['itunes'],
-			'content' = iTunesID
+			'type' => $linkTypes['itunes'],
+			'content' => iTunesID
 		}
 
 		return resultHash
 	end
 	
 	resultHash = {
-		'type' = linkTypes['notfound'],
-		'content' = ''
+		'type' => $linkTypes['notfound'],
+		'content' => ''
 	}
 
 end
@@ -131,19 +132,19 @@ end
 
 post '/spotitunes' do
 
-	if params[:token] != ENV['SLACK_TOKEN']
-		return
-	end
+#	if params[:token] != ENV['SLACK_TOKEN']
+#		return
+#	end
 
 	searchHash = parseMessage(params[:text])
 
 	case searchHash['type']
 
-	when linkTypes['notfound']
+	when $linkTypes['notfound']
 
 		return
 
-	when linkTypes['spotify']
+	when $linkTypes['spotify']
 
 		artistAlbum = getArtistAlbumFromSpotifyURL(searchHash['content'])
 
@@ -152,7 +153,7 @@ post '/spotitunes' do
 
 		outputmessage = itunesLink + "\n" + gPlayLink
 
-	when linkTypes['itunes']
+	when $linkTypes['itunes']
 
 		artistAlbum = getArtistAlbumFromiTunesID(searchHash['content'])
 
