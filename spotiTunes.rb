@@ -3,7 +3,16 @@ require 'httparty'
 require 'json'
 require 'oga'
 
+
+	$linkTypes = {
+		'notfound' => 0,
+		'spotify' => 1,
+		'itunes' => 2
+	}
+
 def parseMessage(message)
+
+	puts message
 
 	spotifyURL = /spotify:(\balbum|\btrack):[a-zA-Z0-9]+/.match(message)
 
@@ -13,10 +22,16 @@ def parseMessage(message)
 			'type' => spotifyURL[1],
 			'id' => spotifyURL[2]
 		}
-		return spotifyHash
+
+		resultHash = {
+			'type' => $linkTypes['spotify'],
+			'content' => spotifyHash
+		}
+
+		return resultHash
 	end
 
-	spotifyURL = /https:\/\/play.spotify.com\/(\btrack|\balbum)\/([a-zA-Z0-9])+/.match(message)
+	spotifyURL = /https:\/\/play\.spotify\.com\/(\btrack|\balbum)\/([a-zA-Z0-9])+/.match(message)
 
 	if !(spotifyURL.nil?)
 		spotifyURL = spotifyURL.to_s.split('/')
@@ -24,12 +39,41 @@ def parseMessage(message)
 			'type' => spotifyURL[3],
 			'id' => spotifyURL[4]
 		}
-		return spotifyHash
+
+		resultHash = {
+			'type' => $linkTypes['spotify'],
+			'content' => spotifyHash
+		}
+
+		return resultHash
 	end
 
-	if spotifyURL.nil?
-		return "-1"
+	iTunesURL = /https:\/\/itun\.es\/.+/.match(message)
+
+	if !(iTunesURL.nil?)
+		response = HTTParty.head(iTunesURL.to_s, follow_redirects: false)
+		url = response.headers['location']
+		puts response
+		return parseMessage(url)
 	end
+
+	iTunesURL = /https:\/\/itunes\.apple\.com\/.+/.match(message)
+
+	if !(iTunesURL.nil?)
+		iTunesID = iTunesURL.to_s.split('/')[6][2..-1]
+
+		resultHash = {
+			'type' => $linkTypes['itunes'],
+			'content' => iTunesID
+		}
+
+		return resultHash
+	end
+	
+	resultHash = {
+		'type' => $linkTypes['notfound'],
+		'content' => ''
+	}
 
 end
 
@@ -39,6 +83,30 @@ def getArtistAlbumFromSpotifyURL(spotifyHash)
 
 	json_response = JSON.parse(HTTParty.get(url).body)
 	return json_response['artists'][0]['name'] + ' ' + json_response['name']
+
+end
+
+def getArtistAlbumFromiTunesID(iTunesID)
+
+	url = "https://itunes.apple.com/lookup?id=#{iTunesID}&country=gb"
+
+	json_response = JSON.parse(HTTParty.get(url).body)
+	return json_response['results'][0]['artistName'] + ' ' + json_response['results'][0]['collectionName']
+
+end
+
+def getSpotifyFirstHit(searchTerm)
+
+	url ="https://api.spotify.com/v1/search?q=#{searchTerm}&type=album,track"
+
+	begin
+		json_response = JSON.parse(HTTParty.get(url).body)
+		spotifyLink = json_response['albums']['items'][0]['external_urls']['spotify']
+	rescue Exception => e
+		return "Couldn't get this one from Spotify"
+	end
+
+	return spotifyLink
 
 end
 
@@ -84,18 +152,35 @@ post '/spotitunes' do
 		return
 	end
 
-	message = params[:text]
+	searchHash = parseMessage(params[:text])
 
-	if (spotifyURL = parseMessage(message)) != "-1"
+	case searchHash['type']
 
-		artistAlbum = getArtistAlbumFromSpotifyURL(spotifyURL)
+	when $linkTypes['notfound']
+
+		return
+
+	when $linkTypes['spotify']
+
+		artistAlbum = getArtistAlbumFromSpotifyURL(searchHash['content'])
+
 		itunesLink = getiTunesFirstCollectionView(artistAlbum)
 		gPlayLink = getGPlayFirstAlbum(artistAlbum)
 
 		outputmessage = itunesLink + "\n" + gPlayLink
 
-		content_type :json
-		{:text => outputmessage}.to_json
+	when $linkTypes['itunes']
+
+		artistAlbum = getArtistAlbumFromiTunesID(searchHash['content'])
+
+		spotifyLink = getSpotifyFirstHit(artistAlbum)
+		gPlayLink = getGPlayFirstAlbum(artistAlbum)
+
+		outputmessage = spotifyLink + "\n" + gPlayLink
+
 	end
+
+	content_type :json
+	{:text => outputmessage}.to_json
 
 end
