@@ -51,7 +51,7 @@ def parseMessage(message)
 	if !(iTunesURL.nil?)
 		response = HTTParty.head(iTunesURL.to_s.strip(), follow_redirects: false)
 		url = response.headers['location']
-		puts response
+		
 		return parseMessage(url)
 	end
 
