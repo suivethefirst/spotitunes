@@ -12,8 +12,6 @@ require 'oga'
 
 def parseMessage(message)
 
-	puts message
-
 	spotifyURL = /spotify:(\balbum|\btrack):[a-zA-Z0-9]+/.match(message)
 
 	if !(spotifyURL.nil?)
