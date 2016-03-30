@@ -49,9 +49,13 @@ def parseMessage(message)
 	iTunesURL = /https:\/\/itun\.es\/.+/.match(message)
 
 	if !(iTunesURL.nil?)
-		response = HTTParty.head(iTunesURL.to_s.strip(), follow_redirects: false)
+		begin 
+			response = HTTParty.head(iTunesURL.to_s, follow_redirects: false)
+		rescue
+			puts "Error URI:" + iTunesURL.to_s + "END"
+		end
 		url = response.headers['location']
-		
+
 		return parseMessage(url)
 	end
 
