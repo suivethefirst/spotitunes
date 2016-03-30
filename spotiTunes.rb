@@ -12,6 +12,8 @@ require 'oga'
 
 def parseMessage(message)
 
+	puts message
+
 	spotifyURL = /spotify:(\balbum|\btrack):[a-zA-Z0-9]+/.match(message)
 
 	if !(spotifyURL.nil?)
@@ -29,7 +31,7 @@ def parseMessage(message)
 		return resultHash
 	end
 
-	spotifyURL = /https:\/\/play.spotify.com\/(\btrack|\balbum)\/([a-zA-Z0-9])+/.match(message)
+	spotifyURL = /https:\/\/play\.spotify\.com\/(\btrack|\balbum)\/([a-zA-Z0-9])+/.match(message)
 
 	if !(spotifyURL.nil?)
 		spotifyURL = spotifyURL.to_s.split('/')
@@ -46,7 +48,16 @@ def parseMessage(message)
 		return resultHash
 	end
 
-	iTunesURL = /https:\/\/itunes.apple.com\/.+/.match(message)
+	iTunesURL = /https:\/\/itun\.es\/.+/.match(message)
+
+	if !(iTunesURL.nil?)
+		response = HTTParty.head(iTunesURL.to_s, follow_redirects: false)
+		url = response.headers['location']
+		puts response
+		return parseMessage(url)
+	end
+
+	iTunesURL = /https:\/\/itunes\.apple\.com\/.+/.match(message)
 
 	if !(iTunesURL.nil?)
 		iTunesID = iTunesURL.to_s.split('/')[6][2..-1]
@@ -77,7 +88,7 @@ end
 
 def getArtistAlbumFromiTunesID(iTunesID)
 
-	url = "https://itunes.apple.com/lookup?id=#{iTunesID}"
+	url = "https://itunes.apple.com/lookup?id=#{iTunesID}&country=gb"
 
 	json_response = JSON.parse(HTTParty.get(url).body)
 	return json_response['results'][0]['artistName'] + ' ' + json_response['results'][0]['collectionName']
