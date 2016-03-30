@@ -148,9 +148,9 @@ end
 
 post '/spotitunes' do
 
-#	if params[:token] != ENV['SLACK_TOKEN']
-#		return
-#	end
+	if params[:token] != ENV['SLACK_TOKEN']
+		return
+	end
 
 	searchHash = parseMessage(params[:text])
 
