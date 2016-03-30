@@ -99,9 +99,14 @@ def getSpotifyFirstHit(searchTerm)
 
 	url ="https://api.spotify.com/v1/search?q=#{searchTerm}&type=album,track"
 
-	json_response = JSON.parse(HTTParty.get(url).body)
+	begin
+		json_response = JSON.parse(HTTParty.get(url).body)
+		spotifyLink = json_response['albums']['items'][0]['external_urls']['spotify']
+	rescue Exception => e
+		return "Couldn't get this one from Spotify"
+	end
 
-	return json_response['albums']['items'][0]['external_urls']['spotify']
+	return spotifyLink
 
 end
 
