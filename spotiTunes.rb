@@ -51,7 +51,7 @@ def parseMessage(message)
 	if !(iTunesURL.nil?)
 		begin 
 			response = HTTParty.head(iTunesURL.to_s, follow_redirects: false)
-		rescue
+		rescue Exception => e
 			puts "Error URI:" + iTunesURL.to_s + "END"
 		end
 		url = response.headers['location']
