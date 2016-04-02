@@ -159,7 +159,7 @@ post '/spotitunes' do
 
 	puts params[:user_name]
 
-	if params[:user_name] == 'spotitunes'
+	if params[:user_name] == 'spotitunestest'
 		return
 	end
 
@@ -193,6 +193,6 @@ post '/spotitunes' do
 
 	content_type :json
 	{:text => outputmessage,
-	 :username => 'spotitunes'}.to_json
+	 :username => 'spotitunestest'}.to_json
 
 end
