@@ -52,7 +52,14 @@ def parseMessage(message)
 		response = HTTParty.head(iTunesURL.to_s, follow_redirects: false)
 		url = response.headers['location']
 
-		return parseMessage(url)
+		iTunesID = url.to_s.split('/')[6][2..-1]
+
+		resultHash = {
+			'type' => $linkTypes['itunes'],
+			'content' => iTunesID
+		}
+
+		return resultHash
 	end
 
 	iTunesURL = /https:\/\/itunes\.apple\.com\/([a-zA-Z0-9\/\-])+/.match(message)
