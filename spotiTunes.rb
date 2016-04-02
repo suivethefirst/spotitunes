@@ -157,7 +157,7 @@ post '/spotitunes' do
 		return
 	end
 
-	puts params[:user_name]
+	puts params
 
 	if params[:user_name] == 'spotitunestest'
 		return
