@@ -190,6 +190,7 @@ post '/spotitunes' do
 	end
 
 	content_type :json
-	{:text => outputmessage}.to_json
+	{:text => outputmessage,
+	 :username => 'spotitunes'}.to_json
 
 end
