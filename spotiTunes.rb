@@ -157,9 +157,7 @@ post '/spotitunes' do
 		return
 	end
 
-	puts params
-
-	if params[:user_name] == 'spotitunestest'
+	if params[:user_name] == 'slackbot'
 		return
 	end
 
@@ -192,7 +190,6 @@ post '/spotitunes' do
 	end
 
 	content_type :json
-	{:text => outputmessage,
-	 :username => 'spotitunestest'}.to_json
+	{:text => outputmessage}.to_json
 
 end
