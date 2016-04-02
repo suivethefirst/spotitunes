@@ -150,6 +150,10 @@ post '/spotitunes' do
 		return
 	end
 
+	if params[:user_name] == 'spotitunes'
+		return
+	end
+
 	searchHash = parseMessage(params[:text])
 
 	case searchHash['type']
