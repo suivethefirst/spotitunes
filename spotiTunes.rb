@@ -176,7 +176,7 @@ post '/spotitunes' do
 		itunesLink = getiTunesFirstCollectionView(artistAlbum)
 		gPlayLink = getGPlayFirstAlbum(artistAlbum)
 
-		outputmessage = itunesLink + "\n" + gPlayLink
+		outputmessage = ":applemusic: " + itunesLink + "\n\n" + ":googleplay: " + gPlayLink
 
 	when $linkTypes['itunes']
 
@@ -185,7 +185,7 @@ post '/spotitunes' do
 		spotifyLink = getSpotifyFirstHit(artistAlbum)
 		gPlayLink = getGPlayFirstAlbum(artistAlbum)
 
-		outputmessage = spotifyLink + "\n" + gPlayLink
+		outputmessage = ":spotify: " + spotifyLink + "\n\n" + ":googleplay: " + gPlayLink
 
 	end
 
