@@ -191,6 +191,7 @@ post '/spotitunes' do
 
 	content_type :json
 	{:text => outputmessage,
-	 :unfurl_links => false}.to_json
+	 :unfurl_links => false,
+	 :unfurl_media => false}.to_json
 
 end
