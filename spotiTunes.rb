@@ -46,7 +46,7 @@ def parseMessage(message)
 		return resultHash
 	end
 
-	iTunesURL = /https:\/\/itun\.es\/([a-zA-Z0-9\/\-])+/.match(message)
+	iTunesURL = /https:\/\/itun\.es\/([a-zA-Z0-9\/\-\_])+/.match(message)
 
 	if !(iTunesURL.nil?)
 		response = HTTParty.head(iTunesURL.to_s, follow_redirects: false)
@@ -62,7 +62,7 @@ def parseMessage(message)
 		return resultHash
 	end
 
-	iTunesURL = /https:\/\/itunes\.apple\.com\/([a-zA-Z0-9\/\-])+/.match(message)
+	iTunesURL = /https:\/\/itunes\.apple\.com\/([a-zA-Z0-9\/\-\_])+/.match(message)
 
 	if !(iTunesURL.nil?)
 		iTunesID = iTunesURL.to_s.split('/')[6][2..-1]
