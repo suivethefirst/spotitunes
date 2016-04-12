@@ -182,6 +182,7 @@ post '/spotitunes' do
 		return
 	end
 
+	print params[:text]
 	searchHash = parseMessage(params[:text])
 
 	case searchHash['type']
