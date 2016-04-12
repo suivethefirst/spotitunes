@@ -18,8 +18,8 @@ def parseMessage(message)
 	if !(gmusicURL.nil?)
 		gmusicURL = gmusicURL.to_s.split('/')
 		gmusicHash = {
-			'artist' => gmusicURL[7],
-			'album' => gmusicURL[8]
+			'type' => gmusicURL[7],
+			'id' => gmusicURL[8]
 		}
 		
 		resultHash = {
@@ -120,8 +120,8 @@ end
 
 def getArtistAlbumFromGoogleURL(gmusicHash)
 
-	print "#{gmusicHash['artist']} + ' ' + #{gmusicHash['album']}"
-	return "#{gmusicHash['artist']} + ' ' + #{gmusicHash['album']}"
+	print "#{gmusicHash['type']} + ' ' + #{gmusicHash['id']}"
+	return "#{gmusicHash['type']} + ' ' + #{gmusicHash['id']}"
 
 end
 
