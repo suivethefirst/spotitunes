@@ -17,9 +17,12 @@ def parseMessage(message)
 
 	if !(gmusicURL.nil?)
 		gmusicURL = gmusicURL.to_s.split('/')
+		gmusicANSIArtist = gmusicURL[7].unpack("U*").map{|c|c.chr rescue '_' }.join
+		gmusicANSIAlbum = gmusicURL[8].unpack("U*").map{|c|c.chr rescue '_' }.join
+
 		gmusicHash = {
-			'type' => gmusicURL[7],
-			'id' => gmusicURL[8]
+			'type' => gmusicANSIArtist,
+			'id' => gmusicANSIAlbum
 		}
 		
 		resultHash = {
