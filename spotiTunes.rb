@@ -13,15 +13,15 @@ require 'oga'
 def parseMessage(message)
 
 	gmusicURL = /https:\/\/play\.google\.com\/music\/listen\?u\=0\#\/album\/(\bartist)\/(\balbum)+/.match(message)
-    puts searchHash
-    
+
 	if !(gmusicURL.nil?)
 		gmusicURL = gmusicURL.to_s.split('/')
 		gmusicHash = {
 			'artist' => gmusicURL[1],
 			'album' => gmusicURL[2]
 		}
-
+		puts gmusicURL[1] + " " + gmusicURL[2]
+		
 		resultHash = {
 			'type' => $linkTypes['gmusic'],
 			'content' => gmusicHash
