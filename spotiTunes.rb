@@ -215,7 +215,7 @@ post '/spotitunes' do
 		spotifyLink = getSpotifyFirstHit(artistAlbum)
 		gPlayLink = getGPlayFirstAlbum(artistAlbum)
 
-		outputmessage = ":spotify: " + spotifyLink + "\n\n" + ":applemusic: " + itunesLink
+		#outputmessage = ":spotify: " + spotifyLink + "\n\n" + ":applemusic: " + itunesLink
 
 	end
 
