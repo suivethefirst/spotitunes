@@ -18,8 +18,8 @@ def parseMessage(message)
 	if !(gmusicURL.nil?)
 		gmusicURL = gmusicURL.to_s.split('/')
 		gmusicHash = {
-			'artist' => gmusicURL[6],
-			'album' => gmusicURL[7]
+			'artist' => gmusicURL[7],
+			'album' => gmusicURL[8]
 		}
 		
 		resultHash = {
