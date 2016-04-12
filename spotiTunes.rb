@@ -13,7 +13,7 @@ require 'oga'
 
 def parseMessage(message)
 
-	gmusicURL = /https:\/\/play\.google\.com\/music\/listen\?u\=0\#\/album\/([a-zA-Z0-9])+/.match(message)
+	gmusicURL = /https:\/\/play\.google\.com\/music\/listen\?u\=0\#\/album\/([a-zA-Z0-9])\/([a-zA-Z0-9])\/([a-zA-Z0-9])+/.match(message)
 
 	if !(gmusicURL.nil?)
 		gmusicURL = gmusicURL.to_s.split('/')
