@@ -213,9 +213,9 @@ post '/spotitunes' do
 		artistAlbum = getArtistAlbumFromGoogleURL(searchHash['content'])
 
 		spotifyLink = getSpotifyFirstHit(artistAlbum)
-		gPlayLink = getGPlayFirstAlbum(artistAlbum)
+		itunesLink = getiTunesFirstCollectionView(artistAlbum)
 
-		#outputmessage = ":spotify: " + spotifyLink + "\n\n" + ":applemusic: " + itunesLink
+		outputmessage = ":spotify: " + spotifyLink + "\n\n" + ":applemusic: " + itunesLink
 
 	end
 
