@@ -2,6 +2,7 @@ require 'sinatra'
 require 'httparty'
 require 'json'
 require 'oga'
+require 'uri'
 
 
 	$linkTypes = {
@@ -17,8 +18,8 @@ def parseMessage(message)
 
 	if !(gmusicURL.nil?)
 		gmusicURL = gmusicURL.to_s.split('/')
-		gmusicANSIArtist = gmusicURL[7].to_s.unpack("U*").map{|c|c.chr rescue '_' }.join
-		gmusicANSIAlbum = gmusicURL[8].to_s.unpack("U*").map{|c|c.chr rescue '_' }.join
+		gmusicANSIArtist = URI.unescape(gmusicURL[7].to_s)
+		gmusicANSIAlbum = URI.unescape(gmusicURL[8].to_s)
 		print gmusicANSIAlbum
 		print gmusicANSIArtist
 
