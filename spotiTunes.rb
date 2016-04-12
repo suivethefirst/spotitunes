@@ -12,6 +12,23 @@ require 'oga'
 
 def parseMessage(message)
 
+	GMusicURL = /https:\/\/play\.google\.com\/music\/listen\?u\=0\#\/album\/(\bartist)\/(\balbum)+/.match(message)
+
+	if !(GMusicURL.nil?)
+		GMusicURL = GMusicURL.to_s.split('/')
+		gmusicHash = {
+			'artist' => GMusicURL[1],
+			'album' => GMusicURL[2]
+		}
+
+		resultHash = {
+			'type' => $linkTypes['gmusic'],
+			'content' => gmusicHash
+		}
+
+		return resultHash
+	end
+
 	spotifyURL = /spotify:(\balbum|\btrack):[a-zA-Z0-9]+/.match(message)
 
 	if !(spotifyURL.nil?)
@@ -153,10 +170,6 @@ end
 
 post '/spotitunes' do
 
-	if params[:token] != ENV['SLACK_TOKEN']
-		return
-	end
-
 	if params[:user_name] == 'slackbot'
 		return
 	end
@@ -186,6 +199,15 @@ post '/spotitunes' do
 		gPlayLink = getGPlayFirstAlbum(artistAlbum)
 
 		outputmessage = ":spotify: " + spotifyLink + "\n\n" + ":googleplay: " + gPlayLink
+
+	when $linkTypes['gmusic']
+
+		artistAlbum = gmusicHash['artist'] + " " + gmusicHash['album']
+
+		spotifyLink = getSpotifyFirstHit(artistAlbum)
+		gPlayLink = getGPlayFirstAlbum(artistAlbum)
+
+		outputmessage = ":spotify: " + spotifyLink + "\n\n" + ":applemusic: " + itunesLink
 
 	end
 
