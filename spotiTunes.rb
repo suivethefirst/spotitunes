@@ -18,8 +18,8 @@ def parseMessage(message)
 	if !(gmusicURL.nil?)
 		gmusicURL = gmusicURL.to_s.split('/')
 		gmusicHash = {
-			'type' => gmusicURL[7],
-			'id' => gmusicURL[8]
+			'type' => gmusicURL[1],
+			'id' => gmusicURL[2]
 		}
 		
 		resultHash = {
@@ -182,7 +182,6 @@ post '/spotitunes' do
 		return
 	end
 
-	print params[:text]
 	searchHash = parseMessage(params[:text])
 
 	case searchHash['type']
