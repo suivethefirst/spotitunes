@@ -181,6 +181,10 @@ end
 
 post '/spotitunes' do
 
+	if params[:token] != ENV['SLACK_TOKEN']
+		return
+	end
+
 	if params[:user_name] == 'slackbot'
 		return
 	end
