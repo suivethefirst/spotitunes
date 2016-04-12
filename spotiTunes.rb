@@ -20,8 +20,6 @@ def parseMessage(message)
 		gmusicURL = gmusicURL.to_s.split('/')
 		gmusicANSIArtist = URI.unescape(gmusicURL[7].to_s.tr("+", " "))
 		gmusicANSIAlbum = URI.unescape(gmusicURL[8].to_s.tr("+", " "))
-		print gmusicANSIAlbum
-		print gmusicANSIArtist
 
 		gmusicHash = {
 			'type' => gmusicANSIArtist,
@@ -126,7 +124,6 @@ end
 
 def getArtistAlbumFromGoogleURL(gmusicHash)
 
-	print "Artist: #{gmusicHash['type']} Album: #{gmusicHash['id']}"
 	return "#{gmusicHash['type']} #{gmusicHash['id']}"
 
 end
