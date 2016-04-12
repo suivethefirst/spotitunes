@@ -121,7 +121,7 @@ end
 
 def getArtistAlbumFromGoogleURL(gmusicHash)
 
-	return 'Rammstein Mutter'
+	return gmusicHash['artist'] + ' ' + gmusicHash['album']
 
 end
 
