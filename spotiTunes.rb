@@ -12,13 +12,13 @@ require 'oga'
 
 def parseMessage(message)
 
-	GMusicURL = /https:\/\/play\.google\.com\/music\/listen\?u\=0\#\/album\/(\bartist)\/(\balbum)+/.match(message)
+	gmusicURL = /https:\/\/play\.google\.com\/music\/listen\?u\=0\#\/album\/(\bartist)\/(\balbum)+/.match(message)
 
-	if !(GMusicURL.nil?)
-		GMusicURL = GMusicURL.to_s.split('/')
+	if !(gmusicURL.nil?)
+		gmusicURL = gmusicURL.to_s.split('/')
 		gmusicHash = {
-			'artist' => GMusicURL[1],
-			'album' => GMusicURL[2]
+			'artist' => gmusicURL[1],
+			'album' => gmusicURL[2]
 		}
 
 		resultHash = {
