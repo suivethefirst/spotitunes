@@ -21,7 +21,6 @@ def parseMessage(message)
 			'artist' => gmusicURL[7],
 			'album' => gmusicURL[8]
 		}
-		print "!!!!!!!!!!!!!!!!!!!" + gmusicURL[7] + " " + gmusicURL[8] + "!!!!!!!!!!!!!!!!!!!!"
 		
 		resultHash = {
 			'type' => $linkTypes['gmusic'],
@@ -121,6 +120,7 @@ end
 
 def getArtistAlbumFromGoogleURL(gmusicHash)
 
+	print "#{gmusicHash['artist']} + ' ' + #{gmusicHash['album']}"
 	return "#{gmusicHash['artist']} + ' ' + #{gmusicHash['album']}"
 
 end
