@@ -7,7 +7,8 @@ require 'oga'
 	$linkTypes = {
 		'notfound' => 0,
 		'spotify' => 1,
-		'itunes' => 2
+		'itunes' => 2,
+		'gmusic' => 3
 	}
 
 def parseMessage(message)
@@ -117,6 +118,12 @@ def getArtistAlbumFromiTunesID(iTunesID)
 
 end
 
+def getArtistAlbumFromGoogleURL(gmusicHash)
+
+	return gmusicHash['artist'] + " " + gmusicHash['album']
+
+end
+
 def getSpotifyFirstHit(searchTerm)
 
 	url ="https://api.spotify.com/v1/search?q=#{searchTerm}&type=album,track"
@@ -202,7 +209,7 @@ post '/spotitunes' do
 
 	when $linkTypes['gmusic']
 
-		artistAlbum = gmusicHash['artist'] + " " + gmusicHash['album']
+		artistAlbum = getArtistAlbumFromGoogleURL(searchHash['content'])
 
 		spotifyLink = getSpotifyFirstHit(artistAlbum)
 		gPlayLink = getGPlayFirstAlbum(artistAlbum)
