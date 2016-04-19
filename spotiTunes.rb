@@ -34,6 +34,29 @@ def parseMessage(message)
 		return resultHash
 	end
 
+	gmusicURL = /https:\/\/play\.google\.com\/music\/m\/.*\?t\=.*_-_[^>]*/.match(message)
+
+	if !(gmusicURL.nil?)
+		gmusicAlbumDelimiter = '\?t\='
+		gmusicAristDelimiter = '_-_'
+		gmusicAlbum = gmusicURL.to_s[/#{gmusicAlbumDelimiter}(.*?)#{gmusicAristDelimiter}/m, 1]
+		gmusicArtist = gmusicURL.to_s.split('_-_')
+		gmusicANSIArtist = URI.unescape(gmusicArtist[1].to_s.tr("_", " "))
+		gmusicANSIAlbum = URI.unescape(gmusicAlbum.to_s.tr("_", " "))
+		print 
+		gmusicHash = {
+			'type' => gmusicANSIArtist,
+			'id' => gmusicANSIAlbum
+		}
+		
+		resultHash = {
+			'type' => $linkTypes['gmusic'],
+			'content' => gmusicHash
+		}
+
+		return resultHash
+	end
+
 	spotifyURL = /spotify:(\balbum|\btrack):[a-zA-Z0-9]+/.match(message)
 
 	if !(spotifyURL.nil?)
