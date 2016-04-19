@@ -1,4 +1,0 @@
-.env
-.bundle/
-bin/
-Gemfile.lock
