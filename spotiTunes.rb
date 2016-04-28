@@ -253,7 +253,7 @@ post '/spotitunes' do
 		artistAlbum = getArtistAlbumFromGoogleURL(searchHash['content'])
 		gPlayLink = buildGMusicShareURL(searchHash['content'],searchHash['gmusicuuid'])
 
-		HTTParty.post(ENV['SLACK_WEBHOOK'].to_str, :body => { :text => "I think that\'s meant to be: <#{gPlayLink}>" }.to_json, :headers => { 'Content-Type' => 'application/json' } )
+		HTTParty.post(ENV['SLACK_WEBHOOK'].to_str, :body => { :text => "<#{gPlayLink}>" }.to_json, :headers => { 'Content-Type' => 'application/json' } )
 
 		spotifyLink = getSpotifyFirstHit(artistAlbum)
 		itunesLink = getiTunesFirstCollectionView(artistAlbum)
