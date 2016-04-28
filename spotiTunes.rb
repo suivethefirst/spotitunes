@@ -9,7 +9,8 @@ require 'uri'
 		'notfound' => 0,
 		'spotify' => 1,
 		'itunes' => 2,
-		'gmusic' => 3
+		'gmusic' => 3,
+		'gmusicshare' => 4
 	}
 
 def parseMessage(message)
@@ -50,7 +51,7 @@ def parseMessage(message)
 		}
 		
 		resultHash = {
-			'type' => $linkTypes['gmusic'],
+			'type' => $linkTypes['gmusicshare'],
 			'content' => gmusicHash
 		}
 
@@ -239,6 +240,10 @@ post '/spotitunes' do
 		outputmessage = ":spotify: " + spotifyLink + "\n\n" + ":googleplay: " + gPlayLink
 
 	when $linkTypes['gmusic']
+
+		print "Didn't you mean to share that?"
+
+	when $linkTypes['gmusicshare']
 
 		artistAlbum = getArtistAlbumFromGoogleURL(searchHash['content'])
 
