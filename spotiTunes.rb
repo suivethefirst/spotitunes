@@ -209,7 +209,7 @@ def buildGMusicShareURL(searchTerm,gmusicUUID)
 	url = "https://play.google.com/music/m/#{gmusicUUID}?t=#{searchTerm['type']}_-_#{searchTerm['id']}"
 
 	return url
-
+end
 
 post '/spotitunes' do
 
