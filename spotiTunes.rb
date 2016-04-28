@@ -204,9 +204,9 @@ def getGPlayFirstAlbum(searchTerm)
 	return gPlayLink
 end
 
-def buildGMusicShareURL(gmusicUUID)
+def buildGMusicShareURL(artistAlbum,gmusicUUID)
 
-	url = "https://play.google.com/music/m/#{gmusicUUID}"
+	url = "https://play.google.com/music/m/#{gmusicUUID}?t=#{artistAlbum}"
 
 	return url
 end
@@ -251,9 +251,14 @@ post '/spotitunes' do
 	when $linkTypes['gmusic']
 
 		artistAlbum = getArtistAlbumFromGoogleURL(searchHash['content'])
-		gPlayLink = buildGMusicShareURL(searchHash['gmusicuuid'])
+		gPlayLink = buildGMusicShareURL(artistAlbum,searchHash['gmusicuuid'])
 
 		HTTParty.post(ENV['SLACK_WEBHOOK'].to_str, :body => { :text => "I think that\'s meant to be: <#{gPlayLink}>" }.to_json, :headers => { 'Content-Type' => 'application/json' } )
+
+		spotifyLink = getSpotifyFirstHit(artistAlbum)
+		itunesLink = getiTunesFirstCollectionView(artistAlbum)
+
+		outputmessage = ":spotify: " + spotifyLink + "\n\n" + ":applemusic: " + itunesLink
 
 	when $linkTypes['gmusicshare']
 
