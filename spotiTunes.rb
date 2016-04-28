@@ -217,9 +217,9 @@ post '/spotitunes' do
 		return
 	end
 
-	#if params[:user_name] == 'slackbot'
-	#return
-	#end
+	if params[:user_name] == 'slackbot'
+		return
+	end
 
 	posting_user = params[:user_name]
 	searchHash = parseMessage(params[:text])
