@@ -3,6 +3,7 @@ require 'httparty'
 require 'json'
 require 'oga'
 require 'uri'
+require 'json'
 
 
 	$linkTypes = {
@@ -241,7 +242,7 @@ post '/spotitunes' do
 
 	when $linkTypes['gmusic']
 
-		print "Didn't you mean to share that?"
+		HTTParty.post(ENV['SLACK_WEBHOOK'].to_str, :body => { :text => 'You done goofed' }.to_json, :headers => { 'Content-Type' => 'application/json' } )
 
 	when $linkTypes['gmusicshare']
 
