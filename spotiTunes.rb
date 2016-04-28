@@ -206,7 +206,7 @@ end
 
 def buildGMusicShareURL(artistAlbum,gmusicUUID)
 
-	url = "https://play.google.com/music/m/#{gmusicUUID}?t=#{artistAlbum}"
+	url = "https://play.google.com/music/m/#{gmusicUUID}?t=#{artistAlbum['type']}_-_#{artistAlbum['id']}"
 
 	return url
 end
