@@ -20,6 +20,7 @@ def parseMessage(message)
 
 	if !(gmusicURL.nil?)
 		gmusicURL = gmusicURL.to_s.split('/')
+		gmusicUUID = URI.unescape(gmusicURL[6].to_s)
 		gmusicANSIArtist = URI.unescape(gmusicURL[7].to_s.tr("+", " "))
 		gmusicANSIAlbum = URI.unescape(gmusicURL[8].to_s.tr("+", " "))
 
@@ -30,7 +31,8 @@ def parseMessage(message)
 		
 		resultHash = {
 			'type' => $linkTypes['gmusic'],
-			'content' => gmusicHash
+			'content' => gmusicHash,
+			'gmusicuuid' => gmusicUUID
 		}
 
 		return resultHash
@@ -202,6 +204,11 @@ def getGPlayFirstAlbum(searchTerm)
 	return gPlayLink
 end
 
+def buildGMusicShareURL(searchTerm,gmusicUUID)
+
+	url = "https://play.google.com/music/m/#{gmusicUUID}?t=#{searchTerm['type']}_-_#{searchTerm['id']}"
+
+	return url
 
 
 post '/spotitunes' do
@@ -242,7 +249,10 @@ post '/spotitunes' do
 
 	when $linkTypes['gmusic']
 
-		HTTParty.post(ENV['SLACK_WEBHOOK'].to_str, :body => { :text => 'You done goofed' }.to_json, :headers => { 'Content-Type' => 'application/json' } )
+		artistAlbum = getArtistAlbumFromGoogleURL(searchHash['content'])
+		gPlayLink = buildGMusicShareURL(artistAlbum,searchHash['gmusicuuid'])
+
+		HTTParty.post(ENV['SLACK_WEBHOOK'].to_str, :body => { :text => '<#{gPlayLink}|Isn\'t this what you want?>' }.to_json, :headers => { 'Content-Type' => 'application/json' } )
 
 	when $linkTypes['gmusicshare']
 
