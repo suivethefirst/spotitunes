@@ -217,9 +217,9 @@ post '/spotitunes' do
 		return
 	end
 
-	if params[:user_name] == 'slackbot'
-		return
-	end
+	#if params[:user_name] == 'slackbot'
+	#return
+	#end
 
 	posting_user = params[:user_name]
 	searchHash = parseMessage(params[:text])
@@ -253,7 +253,7 @@ post '/spotitunes' do
 		artistAlbum = getArtistAlbumFromGoogleURL(searchHash['content'])
 		gPlayLink = buildGMusicShareURL(searchHash['gmusicuuid'])
 
-		HTTParty.post(ENV['SLACK_WEBHOOK'].to_str, :body => { :channel => "@#{posting_user}" :text => "<#{gPlayLink}>" }.to_json, :headers => { 'Content-Type' => 'application/json' } )
+		HTTParty.post(ENV['SLACK_WEBHOOK'].to_str, :body => { :text => "I think that\'s meant to be: <#{gPlayLink}>" }.to_json, :headers => { 'Content-Type' => 'application/json' } )
 
 	when $linkTypes['gmusicshare']
 
