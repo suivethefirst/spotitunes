@@ -221,6 +221,7 @@ post '/spotitunes' do
 		return
 	end
 
+	posting_user = params[:user_name]
 	searchHash = parseMessage(params[:text])
 
 	case searchHash['type']
@@ -252,7 +253,7 @@ post '/spotitunes' do
 		artistAlbum = getArtistAlbumFromGoogleURL(searchHash['content'])
 		gPlayLink = buildGMusicShareURL(searchHash['gmusicuuid'])
 
-		HTTParty.post(ENV['SLACK_WEBHOOK'].to_str, :body => { :text => "<#{gPlayLink}|Isn\'t this what you want?>" }.to_json, :headers => { 'Content-Type' => 'application/json' } )
+		HTTParty.post(ENV['SLACK_WEBHOOK'].to_str, :body => { :channel => "@#{posting_user}" :text => "<#{gPlayLink}>" }.to_json, :headers => { 'Content-Type' => 'application/json' } )
 
 	when $linkTypes['gmusicshare']
 
