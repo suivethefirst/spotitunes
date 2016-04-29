@@ -3,13 +3,15 @@ require 'httparty'
 require 'json'
 require 'oga'
 require 'uri'
+require 'json'
 
 
 	$linkTypes = {
 		'notfound' => 0,
 		'spotify' => 1,
 		'itunes' => 2,
-		'gmusic' => 3
+		'gmusic' => 3,
+		'gmusicshare' => 4
 	}
 
 def parseMessage(message)
@@ -18,6 +20,7 @@ def parseMessage(message)
 
 	if !(gmusicURL.nil?)
 		gmusicURL = gmusicURL.to_s.split('/')
+		gmusicUUID = URI.unescape(gmusicURL[6].to_s)
 		gmusicANSIArtist = URI.unescape(gmusicURL[7].to_s.tr("+", " "))
 		gmusicANSIAlbum = URI.unescape(gmusicURL[8].to_s.tr("+", " "))
 
@@ -28,7 +31,8 @@ def parseMessage(message)
 		
 		resultHash = {
 			'type' => $linkTypes['gmusic'],
-			'content' => gmusicHash
+			'content' => gmusicHash,
+			'gmusicuuid' => gmusicUUID
 		}
 
 		return resultHash
@@ -50,7 +54,7 @@ def parseMessage(message)
 		}
 		
 		resultHash = {
-			'type' => $linkTypes['gmusic'],
+			'type' => $linkTypes['gmusicshare'],
 			'content' => gmusicHash
 		}
 
@@ -200,7 +204,12 @@ def getGPlayFirstAlbum(searchTerm)
 	return gPlayLink
 end
 
+def buildGMusicShareURL(artistAlbum,gmusicUUID)
 
+	url = "https://play.google.com/music/m/#{gmusicUUID}?t=#{artistAlbum['id']}_-_#{artistAlbum['type']}"
+
+	return url
+end
 
 post '/spotitunes' do
 
@@ -212,6 +221,7 @@ post '/spotitunes' do
 		return
 	end
 
+	posting_user = params[:user_name]
 	searchHash = parseMessage(params[:text])
 
 	case searchHash['type']
@@ -239,6 +249,18 @@ post '/spotitunes' do
 		outputmessage = ":spotify: " + spotifyLink + "\n\n" + ":googleplay: " + gPlayLink
 
 	when $linkTypes['gmusic']
+
+		artistAlbum = getArtistAlbumFromGoogleURL(searchHash['content'])
+		gPlayLink = buildGMusicShareURL(searchHash['content'],searchHash['gmusicuuid'])
+
+		HTTParty.post(ENV['SLACK_WEBHOOK'].to_str, :body => { :text => "Bleep bleep, i'm a bot they mean this URL <#{gPlayLink}>" }.to_json, :headers => { 'Content-Type' => 'application/json' } )
+
+		spotifyLink = getSpotifyFirstHit(artistAlbum)
+		itunesLink = getiTunesFirstCollectionView(artistAlbum)
+
+		outputmessage = ":spotify: " + spotifyLink + "\n\n" + ":applemusic: " + itunesLink
+
+	when $linkTypes['gmusicshare']
 
 		artistAlbum = getArtistAlbumFromGoogleURL(searchHash['content'])
 
