@@ -231,7 +231,7 @@ def buildGMusicShareURL(artistAlbum,gmusicUUID)
 
 	url = "https://play.google.com/music/m/#{gmusicUUID}?t=#{artistAlbum['id']}_-_#{artistAlbum['type']}"
 
-	return url
+	return url.tr(" ", "+")
 end
 
 post '/spotitunes' do
