@@ -118,6 +118,23 @@ def parseMessage(message)
 		return resultHash
 	end
 
+	spotifyURL = /https:\/\/open\.spotify\.com\/(\btrack|\balbum)\/([a-zA-Z0-9])+/.match(message)
+
+	if !(spotifyURL.nil?)
+		spotifyURL = spotifyURL.to_s.split('/')
+		spotifyHash = {
+			'type' => spotifyURL[3],
+			'id' => spotifyURL[4]
+		}
+
+		resultHash = {
+			'type' => $linkTypes['spotify'],
+			'content' => spotifyHash
+		}
+
+		return resultHash
+	end	
+
 	iTunesURL = /https:\/\/itun\.es\/([a-zA-Z0-9\/\-\_])+/.match(message)
 
 	if !(iTunesURL.nil?)
@@ -231,7 +248,7 @@ def buildGMusicShareURL(artistAlbum,gmusicUUID)
 
 	url = "https://play.google.com/music/m/#{gmusicUUID}?t=#{artistAlbum['id']}_-_#{artistAlbum['type']}"
 
-	return url
+	return url.tr(" ", "+")
 end
 
 post '/spotitunes' do
