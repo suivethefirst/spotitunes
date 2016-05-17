@@ -315,10 +315,9 @@ post '/spotitunes' do
 	{
 		:attachments => [
 			{
-				:title => "We think this is " + artistAlbum[1] + " by " + artistAlbum[0],
+				:prextext => "We think this is *" + artistAlbum[1] + "* by *" + artistAlbum[0] + "*",
 				:text => outputmessage
-#	 			:unfurl_links => false,
-#	 			:unfurl_media => false
+				:mrkdwn_in => ["pretext"]
 	 		}
 	 	]
 	}.to_json
