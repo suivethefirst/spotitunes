@@ -3,13 +3,15 @@ require 'httparty'
 require 'json'
 require 'oga'
 require 'uri'
+require 'json'
 
 
 	$linkTypes = {
 		'notfound' => 0,
 		'spotify' => 1,
 		'itunes' => 2,
-		'gmusic' => 3
+		'gmusic' => 3,
+		'gmusicshare' => 4
 	}
 
 def parseMessage(message)
@@ -18,9 +20,57 @@ def parseMessage(message)
 
 	if !(gmusicURL.nil?)
 		gmusicURL = gmusicURL.to_s.split('/')
+		gmusicUUID = URI.unescape(gmusicURL[6].to_s)
 		gmusicANSIArtist = URI.unescape(gmusicURL[7].to_s.tr("+", " "))
 		gmusicANSIAlbum = URI.unescape(gmusicURL[8].to_s.tr("+", " "))
 
+		gmusicHash = {
+			'type' => gmusicANSIArtist,
+			'id' => gmusicANSIAlbum
+		}
+		
+		resultHash = {
+			'type' => $linkTypes['gmusic'],
+			'content' => gmusicHash,
+			'gmusicuuid' => gmusicUUID
+		}
+
+		return resultHash
+	end
+
+	gmusicURL = /https:\/\/play\.google\.com\/music\/m\/.*\?t\=.*_-_[^>]*/.match(message)
+
+	if !(gmusicURL.nil?)
+		gmusicAlbumDelimiter = '\?t\='
+		gmusicAristDelimiter = '_-_'
+		gmusicAlbum = gmusicURL.to_s[/#{gmusicAlbumDelimiter}(.*?)#{gmusicAristDelimiter}/m, 1]
+		gmusicArtist = gmusicURL.to_s.split('_-_')
+		gmusicANSIArtist = URI.unescape(gmusicArtist[1].to_s.tr("_", " "))
+		gmusicANSIAlbum = URI.unescape(gmusicAlbum.to_s.tr("_", " "))
+		print 
+		gmusicHash = {
+			'type' => gmusicANSIArtist,
+			'id' => gmusicANSIAlbum
+		}
+		
+		resultHash = {
+			'type' => $linkTypes['gmusicshare'],
+			'content' => gmusicHash
+		}
+
+		return resultHash
+	end
+
+	gmusicURL = /https:\/\/play\.google\.com\/music\/m\/.*\?t\=.*_-_[^>]*/.match(message)
+
+	if !(gmusicURL.nil?)
+		gmusicAlbumDelimiter = '\?t\='
+		gmusicAristDelimiter = '_-_'
+		gmusicAlbum = gmusicURL.to_s[/#{gmusicAlbumDelimiter}(.*?)#{gmusicAristDelimiter}/m, 1]
+		gmusicArtist = gmusicURL.to_s.split('_-_')
+		gmusicANSIArtist = URI.unescape(gmusicArtist[1].to_s.tr("_", " "))
+		gmusicANSIAlbum = URI.unescape(gmusicAlbum.to_s.tr("_", " "))
+		print 
 		gmusicHash = {
 			'type' => gmusicANSIArtist,
 			'id' => gmusicANSIAlbum
@@ -67,6 +117,23 @@ def parseMessage(message)
 
 		return resultHash
 	end
+
+	spotifyURL = /https:\/\/open\.spotify\.com\/(\btrack|\balbum)\/([a-zA-Z0-9])+/.match(message)
+
+	if !(spotifyURL.nil?)
+		spotifyURL = spotifyURL.to_s.split('/')
+		spotifyHash = {
+			'type' => spotifyURL[3],
+			'id' => spotifyURL[4]
+		}
+
+		resultHash = {
+			'type' => $linkTypes['spotify'],
+			'content' => spotifyHash
+		}
+
+		return resultHash
+	end	
 
 	iTunesURL = /https:\/\/itun\.es\/([a-zA-Z0-9\/\-\_])+/.match(message)
 
@@ -177,7 +244,12 @@ def getGPlayFirstAlbum(searchTerm)
 	return gPlayLink
 end
 
+def buildGMusicShareURL(artistAlbum,gmusicUUID)
 
+	url = "https://play.google.com/music/m/#{gmusicUUID}?t=#{artistAlbum['id']}_-_#{artistAlbum['type']}"
+
+	return url.tr(" ", "+")
+end
 
 post '/spotitunes' do
 
@@ -189,6 +261,7 @@ post '/spotitunes' do
 		return
 	end
 
+	posting_user = params[:user_name]
 	searchHash = parseMessage(params[:text])
 
 	case searchHash['type']
@@ -216,6 +289,18 @@ post '/spotitunes' do
 		outputmessage = ":spotify: " + spotifyLink + "\n\n" + ":googleplay: " + gPlayLink
 
 	when $linkTypes['gmusic']
+
+		artistAlbum = getArtistAlbumFromGoogleURL(searchHash['content'])
+		gPlayLink = buildGMusicShareURL(searchHash['content'],searchHash['gmusicuuid'])
+
+		HTTParty.post(ENV['SLACK_WEBHOOK'].to_str, :body => { :text => "Bleep bleep, i'm a bot they mean this URL <#{gPlayLink}>", :unfurl_links => true }.to_json, :headers => { 'Content-Type' => 'application/json' } )
+
+		spotifyLink = getSpotifyFirstHit(artistAlbum)
+		itunesLink = getiTunesFirstCollectionView(artistAlbum)
+
+		outputmessage = ":spotify: " + spotifyLink + "\n\n" + ":applemusic: " + itunesLink
+
+	when $linkTypes['gmusicshare']
 
 		artistAlbum = getArtistAlbumFromGoogleURL(searchHash['content'])
 
