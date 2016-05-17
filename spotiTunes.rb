@@ -109,7 +109,7 @@ def getArtistAlbumFromSpotifyURL(spotifyHash)
 	url = "https://api.spotify.com/v1/#{spotifyHash['type']}s/#{spotifyHash['id']}"
 
 	json_response = JSON.parse(HTTParty.get(url).body)
-	return json_response['artists'][0]['name'] + ' ' + json_response['name']
+	return json_response['artists'][0]['name'], json_response['name']
 
 end
 
@@ -118,13 +118,13 @@ def getArtistAlbumFromiTunesID(iTunesID)
 	url = "https://itunes.apple.com/lookup?id=#{iTunesID}&country=gb"
 
 	json_response = JSON.parse(HTTParty.get(url).body)
-	return json_response['results'][0]['artistName'] + ' ' + json_response['results'][0]['collectionName']
+	return json_response['results'][0]['artistName'], json_response['results'][0]['collectionName']
 
 end
 
 def getArtistAlbumFromGoogleURL(gmusicHash)
 
-	return "#{gmusicHash['type']} #{gmusicHash['id']}"
+	return "#{gmusicHash['type']}", "#{gmusicHash['id']}"
 
 end
 
@@ -181,9 +181,9 @@ end
 
 post '/spotitunes' do
 
-	if params[:token] != ENV['SLACK_TOKEN']
-		return
-	end
+#	if params[:token] != ENV['SLACK_TOKEN']
+#		return
+#	end
 
 	if params[:user_name] == 'slackbot'
 		return
@@ -201,8 +201,8 @@ post '/spotitunes' do
 
 		artistAlbum = getArtistAlbumFromSpotifyURL(searchHash['content'])
 
-		itunesLink = getiTunesFirstCollectionView(artistAlbum)
-		gPlayLink = getGPlayFirstAlbum(artistAlbum)
+		itunesLink = getiTunesFirstCollectionView(artistAlbum[0] +  ' ' + artistAlbum[1])
+		gPlayLink = getGPlayFirstAlbum(artistAlbum[0] +  ' ' + artistAlbum[1])
 
 		outputmessage = ":applemusic: " + itunesLink + "\n\n" + ":googleplay: " + gPlayLink
 
@@ -210,8 +210,8 @@ post '/spotitunes' do
 
 		artistAlbum = getArtistAlbumFromiTunesID(searchHash['content'])
 
-		spotifyLink = getSpotifyFirstHit(artistAlbum)
-		gPlayLink = getGPlayFirstAlbum(artistAlbum)
+		spotifyLink = getSpotifyFirstHit(artistAlbum[0] +  ' ' + artistAlbum[1])
+		gPlayLink = getGPlayFirstAlbum(artistAlbum[0] +  ' ' + artistAlbum[1])
 
 		outputmessage = ":spotify: " + spotifyLink + "\n\n" + ":googleplay: " + gPlayLink
 
@@ -219,15 +219,15 @@ post '/spotitunes' do
 
 		artistAlbum = getArtistAlbumFromGoogleURL(searchHash['content'])
 
-		spotifyLink = getSpotifyFirstHit(artistAlbum)
-		itunesLink = getiTunesFirstCollectionView(artistAlbum)
+		spotifyLink = getSpotifyFirstHit(artistAlbum[0] +  ' ' + artistAlbum[1])
+		itunesLink = getiTunesFirstCollectionView(artistAlbum[0] +  ' ' + artistAlbum[1])
 
 		outputmessage = ":spotify: " + spotifyLink + "\n\n" + ":applemusic: " + itunesLink
 
 	end
 
 	content_type :json
-	{:text => outputmessage,
+	{:text => "We think this is " + artistAlbum[1] + " by " + artistAlbum[0] + "\n" + outputmessage,
 	 :unfurl_links => false,
 	 :unfurl_media => false}.to_json
 
