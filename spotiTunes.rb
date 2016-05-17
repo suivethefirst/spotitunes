@@ -227,8 +227,15 @@ post '/spotitunes' do
 	end
 
 	content_type :json
-	{:text => "We think this is " + artistAlbum[1] + " by " + artistAlbum[0] + "\n" + outputmessage,
-	 :unfurl_links => false,
-	 :unfurl_media => false}.to_json
+	{
+		:attachments => [
+			{
+				:title => "We think this is " + artistAlbum[1] + " by " + artistAlbum[0],
+				:text => outputmessage
+#	 			:unfurl_links => false,
+#	 			:unfurl_media => false
+	 		}
+	 	]
+	}.to_json
 
 end
