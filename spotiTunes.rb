@@ -315,7 +315,7 @@ post '/spotitunes' do
 	{
 		:attachments => [
 			{
-				:prextext => "We think this is *" + artistAlbum[1] + "* by *" + artistAlbum[0] + "*",
+				:pretext => "We think this is *" + artistAlbum[1] + "* by *" + artistAlbum[0] + "*",
 				:text => outputmessage,
 				:mrkdwn_in => ["pretext"]
 	 		}
