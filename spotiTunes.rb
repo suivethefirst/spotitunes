@@ -318,7 +318,7 @@ post '/spotitunes' do
 				:pretext => "We think this is *" + artistAlbum[1] + "* by *" + artistAlbum[0] + "*",
 				:text => outputmessage,
 				:mrkdwn_in => ["pretext"],
-				:fallback => artistAlbum[0] + "\n" + artistAlbum[1]
+				:fallback => artistAlbum[0] + ": " + artistAlbum[1]
 	 		}
 	 	]
 	}.to_json
